@@ -14,11 +14,8 @@ import static yams.mechanisms.SmartMechanism.gearbox;
 import static yams.mechanisms.SmartMechanism.gearing;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.BaseStatusSignal;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.DoublePublisher;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -37,14 +34,12 @@ import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.remote.TalonFXWrapper;
 import com.ctre.phoenix6.controls.Follower;
 
+import frc.robot.subsystems.SubsystemConstants;
+
 public class ElevatorSubsystem extends SubsystemBase
 {
-  private static final String CANBUS = "rio";
-  private static final int LEADER_ID = 1;
-  private static final int FOLLOWER_ID = 2;
-
-  private final TalonFX                   elevatorMotor = new TalonFX(LEADER_ID, CANBUS);
-  private final TalonFX                   elevatorFollower = new TalonFX(FOLLOWER_ID, CANBUS);
+  private final TalonFX                   elevatorMotor = new TalonFX(SubsystemConstants.ElevatorLEADER_ID, SubsystemConstants.CANBUS);
+  private final TalonFX                   elevatorFollower = new TalonFX(SubsystemConstants.ElevatorFOLLOWER_ID, SubsystemConstants.CANBUS);
   //  private final SmartMotorControllerTelemetryConfig motorTelemetryConfig = new SmartMotorControllerTelemetryConfig()
 //          .withMechanismPosition()
 //          .withRotorPosition()
@@ -53,6 +48,7 @@ public class ElevatorSubsystem extends SubsystemBase
   private final SmartMotorControllerConfig motorConfig   = new SmartMotorControllerConfig(this)
       .withMechanismCircumference(Meters.of(Millimeters.of(5).in(Meters) * 36))
       .withClosedLoopController(5.84, 0, 0, MetersPerSecond.of(2), MetersPerSecondPerSecond.of(2))
+      .withSimClosedLoopController(5, 0, 0, MetersPerSecond.of(2), MetersPerSecondPerSecond.of(2))
       .withSoftLimit(Meters.of(0), Meters.of(2.5))
       .withGearing(gearing(gearbox(2.4444444, 2.8)))
 //      .withExternalEncoder(armMotor.getAbsoluteEncoder())
@@ -65,11 +61,13 @@ public class ElevatorSubsystem extends SubsystemBase
 //      .withClosedLoopRampRate(Seconds.of(0.25))
 //      .withOpenLoopRampRate(Seconds.of(0.25))
       .withFeedforward(new ElevatorFeedforward(0.021, 0.232, 4.4959, 0.10008))
-      .withControlMode(ControlMode.CLOSED_LOOP);
+      .withSimFeedforward(new ElevatorFeedforward(0,0,0,0))
+      .withControlMode(ControlMode.CLOSED_LOOP)
+      .withFollowers(Pair.of(elevatorFollower,true));
+      
   private final SmartMotorController       motor         = new TalonFXWrapper(elevatorMotor,
                                                                             DCMotor.getKrakenX60(2),
                                                                             motorConfig);
-
   private final MechanismPositionConfig m_robotToMechanism = new MechanismPositionConfig()
       .withMaxRobotHeight(Meters.of(1.5))
       .withMaxRobotLength(Meters.of(0.75))
@@ -107,7 +105,6 @@ public class ElevatorSubsystem extends SubsystemBase
 
   public ElevatorSubsystem()
   {
-    elevatorFollower.setControl(new Follower(elevatorMotor.getDeviceID(), true));
   }
 
   public void periodic()

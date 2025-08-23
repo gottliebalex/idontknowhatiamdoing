@@ -9,7 +9,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.ElevatorCommands;
+import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
+import frc.robot.subsystems.Wrist.WristSubsystem;
 
 import static edu.wpi.first.units.Units.Meters;
 
@@ -21,6 +23,7 @@ import static edu.wpi.first.units.Units.Meters;
  */
 public class RobotContainer {
   public ElevatorSubsystem elevator = new ElevatorSubsystem();
+  public WristSubsystem wrist = new WristSubsystem();
   public CommandXboxController xboxController = new CommandXboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -44,6 +47,9 @@ public class RobotContainer {
     xboxController.button(2).onTrue(ElevatorCommands.L2Score(elevator));
     xboxController.button(3).onTrue(ElevatorCommands.L4Score(elevator));
     xboxController.button(4).onTrue(elevator.sysId());
+
+    xboxController.button(5).onTrue(WristCommands.Stowed(wrist));
+    xboxController.button(6).onTrue(WristCommands.AlgaeIntake(wrist));
   }
 
   /**
