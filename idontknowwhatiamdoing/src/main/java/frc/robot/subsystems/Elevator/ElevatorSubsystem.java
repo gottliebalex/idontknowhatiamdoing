@@ -19,8 +19,10 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import yams.mechanisms.config.ElevatorConfig;
@@ -47,9 +49,9 @@ public class ElevatorSubsystem extends SubsystemBase
 //          .withMechanismUpperLimit();
   private final SmartMotorControllerConfig motorConfig   = new SmartMotorControllerConfig(this)
       .withMechanismCircumference(Meters.of(Millimeters.of(5).in(Meters) * 36))
-      .withClosedLoopController(5.84, 0, 0, MetersPerSecond.of(2), MetersPerSecondPerSecond.of(2))
-      .withSimClosedLoopController(5, 0, 0, MetersPerSecond.of(2), MetersPerSecondPerSecond.of(2))
-      .withSoftLimit(Meters.of(0), Meters.of(2.5))
+      .withClosedLoopController(5, 0, 0, MetersPerSecond.of(0.5), MetersPerSecondPerSecond.of(0.5))
+      .withSimClosedLoopController(5, 0, 0, MetersPerSecond.of(0.5), MetersPerSecondPerSecond.of(0.5))
+      .withSoftLimit(Meters.of(0.125), Meters.of(2.5))
       .withGearing(gearing(gearbox(2.4444444, 2.8)))
 //      .withExternalEncoder(armMotor.getAbsoluteEncoder())
       .withIdleMode(MotorMode.BRAKE)
@@ -63,7 +65,9 @@ public class ElevatorSubsystem extends SubsystemBase
       .withFeedforward(new ElevatorFeedforward(0.021, 0.232, 4.4959, 0.10008))
       .withSimFeedforward(new ElevatorFeedforward(0,0,0,0))
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withFollowers(Pair.of(elevatorFollower,true));
+      .withFollowers(Pair.of(elevatorFollower,true))
+      .withStartingPosition(Inches.of(0.25));
+      
       
   private final SmartMotorController       motor         = new TalonFXWrapper(elevatorMotor,
                                                                             DCMotor.getKrakenX60(2),
@@ -74,7 +78,7 @@ public class ElevatorSubsystem extends SubsystemBase
       .withRelativePosition(new Translation3d(Meters.of(-0.25), Meters.of(0), Meters.of(0.5)));
   private       ElevatorConfig          m_config           = new ElevatorConfig(motor)
       .withStartingHeight(Meters.of(0.25))
-      .withHardLimits(Meters.of(0), Meters.of(3))
+      .withHardLimits(Meters.of(0), Meters.of(2.5))
       .withTelemetry("Elevator", TelemetryVerbosity.HIGH)
       .withMechanismPositionConfig(m_robotToMechanism)
       .withMass(Pounds.of(15));
@@ -100,11 +104,13 @@ public class ElevatorSubsystem extends SubsystemBase
     public Distance distance() {
       return distance;
     }
+
   }
 
 
   public ElevatorSubsystem()
   {
+    
   }
 
   public void periodic()

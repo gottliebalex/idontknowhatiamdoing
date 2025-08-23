@@ -47,8 +47,8 @@ public class WristSubsystem extends SubsystemBase
 //          .withMechanismLowerLimit()
 //          .withMechanismUpperLimit();
   private final SmartMotorControllerConfig motorConfig = new SmartMotorControllerConfig(this)
-      .withClosedLoopController(4, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(90))
-      .withSoftLimit(Degrees.of(-180), Degrees.of(360))
+      .withClosedLoopController(4, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(180))
+      .withSoftLimit(Degrees.of(-360), Degrees.of(360))
       .withGearing(gearing(gearbox(12, 3.1111,1.80555)))
 //      .withExternalEncoder(armMotor.getAbsoluteEncoder())
       .withIdleMode(MotorMode.BRAKE)
@@ -73,7 +73,7 @@ public class WristSubsystem extends SubsystemBase
 
   private       ArmConfig m_config = new ArmConfig(motor)
       .withLength(Meters.of(0.135))
-      .withHardLimit(Degrees.of(-100), Degrees.of(200))
+      .withHardLimit(Degrees.of(-200), Degrees.of(100))
       .withTelemetry("ArmExample", TelemetryVerbosity.HIGH)
       .withMass(Pounds.of(1))
       .withStartingPosition(Degrees.of(0))
@@ -87,7 +87,8 @@ public class WristSubsystem extends SubsystemBase
     L1Score(Degrees.of(-120)),
     L2Score(Degrees.of(140)),
     L3Score(Degrees.of(140)),
-    L4Score(Degrees.of(120));
+    L4Score(Degrees.of(120)),
+    Test(Degrees.of(-180));
 
 
     private final Angle angle;

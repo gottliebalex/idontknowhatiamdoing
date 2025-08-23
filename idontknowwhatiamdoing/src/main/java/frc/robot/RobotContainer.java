@@ -8,10 +8,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
+import frc.robot.subsystems.Elevator.ElevatorSubsystem.ElevatorPosition;
 import frc.robot.subsystems.Wrist.WristSubsystem;
+import frc.robot.subsystems.Wrist.WristSubsystem.WristPosition;
 
 import static edu.wpi.first.units.Units.Meters;
 
@@ -31,9 +35,13 @@ public class RobotContainer {
     DriverStation.silenceJoystickConnectionWarning(true);
     configureBindings();
 
+    RobotModeTriggers.teleop().onTrue(
+      setSafePositions());
+    
+
   }
 
-  /**
+  /** 
    * Use this method to define your trigger->command mappings. Triggers can be created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
    * predicate, or via the named factories in {@link
@@ -50,6 +58,8 @@ public class RobotContainer {
 
     xboxController.button(5).onTrue(WristCommands.Stowed(wrist));
     xboxController.button(6).onTrue(WristCommands.AlgaeIntake(wrist));
+    xboxController.button(7).onTrue(WristCommands.TestWrist(wrist));
+    xboxController.button(8).onTrue(wrist.sysId());
   }
 
   /**
@@ -58,6 +68,13 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return Commands.print("No autonomous command configured");  
+  }
+  
+  public Command setSafePositions() {
+    return Commands.runOnce(() -> {
+     elevator.setHeight(ElevatorPosition.Down.distance());
+     wrist.setAngle(WristPosition.Stowed.angle());
+   }, elevator, wrist);
   }
 }
