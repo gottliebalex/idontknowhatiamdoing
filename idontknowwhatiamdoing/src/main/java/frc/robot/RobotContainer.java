@@ -5,9 +5,11 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ElevatorCommands;
@@ -50,17 +52,31 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {
-    xboxController.button(1).onTrue(ElevatorCommands.Down(elevator));
-    xboxController.button(2).onTrue(ElevatorCommands.L2Score(elevator));
-    xboxController.button(3).onTrue(ElevatorCommands.L4Score(elevator));
-    xboxController.button(4).onTrue(elevator.sysId());
+//  private void configureBindings() {
+    // xboxController.button(1).onTrue(ElevatorCommands.Down(elevator));
+    // xboxController.button(2).onTrue(ElevatorCommands.L2Score(elevator));
+    // xboxController.button(3).onTrue(ElevatorCommands.L4Score(elevator));
+    // xboxController.button(4).onTrue(elevator.sysId());
 
-    xboxController.button(5).onTrue(WristCommands.Stowed(wrist));
-    xboxController.button(6).onTrue(WristCommands.AlgaeIntake(wrist));
-    xboxController.button(7).onTrue(WristCommands.TestWrist(wrist));
-    xboxController.button(8).onTrue(wrist.sysId());
+    // xboxController.button(5).onTrue(WristCommands.Stowed(wrist));
+    // xboxController.button(6).onTrue(WristCommands.AlgaeIntake(wrist));
+    // xboxController.button(7).onTrue(WristCommands.TestWrist(wrist));
+    // xboxController.button(8).onTrue(wrist.sysId());
+    //}
+  private final GenericHID apacController = new GenericHID(0); // 0 = USB port
+
+  private void configureBindings() {
+      new JoystickButton(apacController, 1).onTrue(ElevatorCommands.Down(elevator));
+      new JoystickButton(apacController, 2).onTrue(ElevatorCommands.L2Score(elevator));
+      new JoystickButton(apacController, 3).onTrue(ElevatorCommands.L4Score(elevator));
+      new JoystickButton(apacController, 4).onTrue(elevator.sysId());
+
+      new JoystickButton(apacController, 5).onTrue(WristCommands.Stowed(wrist));
+      new JoystickButton(apacController, 6).onTrue(WristCommands.AlgaeIntake(wrist));
+      new JoystickButton(apacController, 7).onTrue(WristCommands.TestWrist(wrist));
+      new JoystickButton(apacController, 8).onTrue(wrist.sysId());
   }
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

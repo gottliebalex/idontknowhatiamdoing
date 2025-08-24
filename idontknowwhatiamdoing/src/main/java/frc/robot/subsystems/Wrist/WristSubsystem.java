@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Millisecond;
+import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
@@ -47,11 +49,11 @@ public class WristSubsystem extends SubsystemBase
 //          .withMechanismLowerLimit()
 //          .withMechanismUpperLimit();
   private final SmartMotorControllerConfig motorConfig = new SmartMotorControllerConfig(this)
-      .withClosedLoopController(4, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(180))
-      .withSoftLimit(Degrees.of(-360), Degrees.of(360))
-      .withGearing(gearing(gearbox(12, 3.1111,1.80555)))
+      .withClosedLoopController(6, 0, 0, DegreesPerSecond.of(360), DegreesPerSecondPerSecond.of(1440))
+//      .withSoftLimit(Degrees.of(-360), Degrees.of(360))
+      .withGearing(gearing(gearbox(67.407)))
 //      .withExternalEncoder(armMotor.getAbsoluteEncoder())
-      .withIdleMode(MotorMode.BRAKE)
+      .withIdleMode(MotorMode.COAST)
       .withTelemetry("ArmMotor", TelemetryVerbosity.HIGH)
 //      .withSpecificTelemetry("ArmMotor", motorTelemetryConfig)
       .withStatorCurrentLimit(Amps.of(40))
@@ -59,9 +61,11 @@ public class WristSubsystem extends SubsystemBase
       .withMotorInverted(false)
       .withClosedLoopRampRate(Seconds.of(0.25))
       .withOpenLoopRampRate(Seconds.of(0.25))
-      .withFeedforward(new ArmFeedforward(0, 0, 0, 0))
+      .withFeedforward(new ArmFeedforward(.2, .2, .4, .003))
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withStartingPosition(Degrees.of(0));
+      .withStartingPosition(Degrees.of(0))
+      .withClosedLoopControlPeriod(Milliseconds.of(1))
+      ;
   private final SmartMotorController       motor            = new TalonFXWrapper(armMotor,
                                                                                DCMotor.getKrakenX60(1),
                                                                                motorConfig);
@@ -73,7 +77,7 @@ public class WristSubsystem extends SubsystemBase
 
   private       ArmConfig m_config = new ArmConfig(motor)
       .withLength(Meters.of(0.135))
-      .withHardLimit(Degrees.of(-200), Degrees.of(100))
+      .withHardLimit(Degrees.of(-360), Degrees.of(360))
       .withTelemetry("ArmExample", TelemetryVerbosity.HIGH)
       .withMass(Pounds.of(1))
       .withStartingPosition(Degrees.of(0))
