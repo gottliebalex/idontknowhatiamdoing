@@ -40,7 +40,10 @@ import yams.motorcontrollers.remote.TalonFXWrapper;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.Follower;
+
+import org.littletonrobotics.junction.Logger;
 
 import frc.robot.subsystems.SubsystemConstants;
 
@@ -56,12 +59,17 @@ public class ElevatorSubsystem extends SubsystemBase
 //          .withMechanismUpperLimit();
   private final SmartMotorControllerConfig motorConfig   = new SmartMotorControllerConfig(this)
       .withMechanismCircumference(Meters.of(Millimeters.of(5).in(Meters) * 36))
+<<<<<<< Updated upstream
       .withClosedLoopController(.1, 0, 0, MetersPerSecond.of(1), MetersPerSecondPerSecond.of(2))
       .withSimClosedLoopController(5, 0, 0, MetersPerSecond.of(1), MetersPerSecondPerSecond.of(2))
+=======
+      .withClosedLoopController(0, 0, 0, MetersPerSecond.of(1), MetersPerSecondPerSecond.of(2))
+      .withSimClosedLoopController(3, 0, 0, MetersPerSecond.of(1), MetersPerSecondPerSecond.of(2))
+>>>>>>> Stashed changes
       .withSoftLimit(Meters.of(0.125), Meters.of(2.5))
       .withGearing(gearing(gearbox(6.8444)))
 //      .withExternalEncoder(armMotor.getAbsoluteEncoder())
-      .withIdleMode(MotorMode.COAST)
+      .withIdleMode(MotorMode.BRAKE)
       .withTelemetry("ElevatorMotor", TelemetryVerbosity.HIGH)
 //      .withSpecificTelemetry("ElevatorMotor", motorTelemetryConfig)
       .withStatorCurrentLimit(Amps.of(60))
@@ -69,12 +77,22 @@ public class ElevatorSubsystem extends SubsystemBase
       .withMotorInverted(false)
 //      .withClosedLoopRampRate(Seconds.of(0.25))
 //      .withOpenLoopRampRate(Seconds.of(0.25))
+<<<<<<< Updated upstream
       .withFeedforward(new ElevatorFeedforward(0.2, 0.5, 0.25, 0.25))
       .withSimFeedforward(new ElevatorFeedforward(.0,.35,.8,0))
       .withControlMode(ControlMode.CLOSED_LOOP)
       .withFollowers(Pair.of(elevatorFollower,true))
       .withStartingPosition(Inches.of(6))
       .withClosedLoopControlPeriod(Milliseconds.of(1));
+=======
+      .withFeedforward(new ElevatorFeedforward(0.0, 0.0, 0.0, 0.0))
+      .withSimFeedforward(new ElevatorFeedforward(.2,.72,.2,2))
+      .withControlMode(ControlMode.CLOSED_LOOP)
+      .withFollowers(Pair.of(elevatorFollower,false))
+//      .withStartingPosition(Inches.of(6))
+//      .withClosedLoopControlPeriod(Milliseconds.of(1))
+      ;
+>>>>>>> Stashed changes
       
   private final SmartMotorController       motor         = new TalonFXWrapper(elevatorMotor,
                                                                             DCMotor.getKrakenX60(2),
@@ -116,6 +134,10 @@ public class ElevatorSubsystem extends SubsystemBase
   }
 
 
+  public static boolean isFollower(TalonFX motor) {
+    ControlRequest applied = motor.getAppliedControl();
+    return applied instanceof Follower;
+}
   public ElevatorSubsystem()
   {
     BaseStatusSignal.setUpdateFrequencyForAll(25,
@@ -123,13 +145,16 @@ public class ElevatorSubsystem extends SubsystemBase
      elevatorMotor.getVelocity(),
      elevatorMotor.getClosedLoopReference());
      elevatorMotor.optimizeBusUtilization();
-
-    //elevatorFollower.setControl(new Follower(elevatorFollower.getDeviceID(), true));
+    
   }
 
   public void periodic()
   {
     m_elevator.updateTelemetry();
+
+    boolean fol = isFollower(elevatorFollower);
+    SmartDashboard.putBoolean("Elevator/Follower Mode", fol);
+    
 
   }
 

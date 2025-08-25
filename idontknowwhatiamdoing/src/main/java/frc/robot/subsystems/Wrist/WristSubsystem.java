@@ -64,7 +64,7 @@ public class WristSubsystem extends SubsystemBase
       .withFeedforward(new ArmFeedforward(.2, .2, .4, .003))
       .withControlMode(ControlMode.CLOSED_LOOP)
       .withStartingPosition(Degrees.of(0))
-      .withClosedLoopControlPeriod(Milliseconds.of(1))
+//      .withClosedLoopControlPeriod(Milliseconds.of(1))
       ;
   private final SmartMotorController       motor            = new TalonFXWrapper(armMotor,
                                                                                DCMotor.getKrakenX60(1),
