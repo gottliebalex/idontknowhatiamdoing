@@ -60,7 +60,7 @@ public class ElevatorSubsystem extends SubsystemBase
   private final SmartMotorControllerConfig motorConfig   = new SmartMotorControllerConfig(this)
       .withMechanismCircumference(Meters.of(Millimeters.of(5).in(Meters) * 36))
       .withClosedLoopController(0, 0, 0, MetersPerSecond.of(1), MetersPerSecondPerSecond.of(2))
-      .withSimClosedLoopController(3, 0, 0, MetersPerSecond.of(1), MetersPerSecondPerSecond.of(2))
+      .withSimClosedLoopController(0, 0, 0, MetersPerSecond.of(1), MetersPerSecondPerSecond.of(2))
       .withSoftLimit(Meters.of(0.125), Meters.of(2.5))
       .withGearing(gearing(gearbox(6.8444)))
 //      .withExternalEncoder(armMotor.getAbsoluteEncoder())
@@ -73,7 +73,7 @@ public class ElevatorSubsystem extends SubsystemBase
 //      .withClosedLoopRampRate(Seconds.of(0.25))
 //      .withOpenLoopRampRate(Seconds.of(0.25))
       .withFeedforward(new ElevatorFeedforward(0.0, 0.0, 0.0, 0.0))
-      .withSimFeedforward(new ElevatorFeedforward(.2,.72,.2,2))
+      .withSimFeedforward(new ElevatorFeedforward(0.0,0.0,0.0,0.0))
       .withControlMode(ControlMode.CLOSED_LOOP)
       .withFollowers(Pair.of(elevatorFollower,false))
 //      .withStartingPosition(Inches.of(6))
@@ -130,7 +130,7 @@ public class ElevatorSubsystem extends SubsystemBase
      elevatorMotor.getPosition(),
      elevatorMotor.getVelocity(),
      elevatorMotor.getClosedLoopReference());
-     elevatorMotor.optimizeBusUtilization();
+//     elevatorMotor.optimizeBusUtilization();
     
   }
 
