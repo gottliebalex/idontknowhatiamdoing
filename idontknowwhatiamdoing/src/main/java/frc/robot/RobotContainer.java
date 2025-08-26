@@ -20,6 +20,7 @@ import frc.robot.subsystems.Wrist.WristSubsystem;
 import frc.robot.subsystems.Wrist.WristSubsystem.WristPosition;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Inches;;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -69,7 +70,7 @@ public class RobotContainer {
       new JoystickButton(apacController, 1).onTrue(ElevatorCommands.Down(elevator));
       new JoystickButton(apacController, 2).onTrue(ElevatorCommands.L2Score(elevator));
       new JoystickButton(apacController, 3).onTrue(ElevatorCommands.L4Score(elevator));
-      new JoystickButton(apacController, 4).onTrue(elevator.sysId());
+      new JoystickButton(apacController, 4).onTrue(ElevatorCommands.Zero(elevator));
 
       new JoystickButton(apacController, 5).onTrue(WristCommands.Stowed(wrist));
       new JoystickButton(apacController, 6).onTrue(WristCommands.AlgaeIntake(wrist));

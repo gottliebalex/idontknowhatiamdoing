@@ -6,7 +6,10 @@ import frc.robot.subsystems.Elevator.ElevatorSubsystem;
 public class ElevatorCommands {
     private ElevatorCommands() {}
 
-
+  public static Command Zero(ElevatorSubsystem elevator) {
+    return elevator.setHeight(ElevatorSubsystem.ElevatorPosition.Zero.distance());
+  }
+      
   public static Command Down(ElevatorSubsystem elevator) {
     return elevator.setHeight(ElevatorSubsystem.ElevatorPosition.Down.distance());
   }

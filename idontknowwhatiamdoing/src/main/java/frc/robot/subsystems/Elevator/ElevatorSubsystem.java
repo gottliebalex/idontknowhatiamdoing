@@ -59,8 +59,8 @@ public class ElevatorSubsystem extends SubsystemBase
 //          .withMechanismUpperLimit();
   private final SmartMotorControllerConfig motorConfig   = new SmartMotorControllerConfig(this)
       .withMechanismCircumference(Meters.of(Millimeters.of(5).in(Meters) * 36))
-      .withClosedLoopController(0, 0, 0, MetersPerSecond.of(1), MetersPerSecondPerSecond.of(2))
-      .withSimClosedLoopController(0, 0, 0, MetersPerSecond.of(1), MetersPerSecondPerSecond.of(2))
+      .withClosedLoopController(1.5, 0, 0, MetersPerSecond.of(2), MetersPerSecondPerSecond.of(5))
+      .withSimClosedLoopController(0, 0, 0, MetersPerSecond.of(2), MetersPerSecondPerSecond.of(2))
       .withSoftLimit(Meters.of(0.125), Meters.of(2.5))
       .withGearing(gearing(gearbox(6.8444)))
 //      .withExternalEncoder(armMotor.getAbsoluteEncoder())
@@ -72,14 +72,14 @@ public class ElevatorSubsystem extends SubsystemBase
       .withMotorInverted(false)
 //      .withClosedLoopRampRate(Seconds.of(0.25))
 //      .withOpenLoopRampRate(Seconds.of(0.25))
-      .withFeedforward(new ElevatorFeedforward(0.0, 0.0, 0.0, 0.0))
+      .withFeedforward(new ElevatorFeedforward(0.2, 0.3, 0.78, 0.001))
       .withSimFeedforward(new ElevatorFeedforward(0.0,0.0,0.0,0.0))
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withFollowers(Pair.of(elevatorFollower,false))
-//      .withStartingPosition(Inches.of(6))
-//      .withClosedLoopControlPeriod(Milliseconds.of(1))
+      .withFollowers(Pair.of(elevatorFollower,true))
+      .withStartingPosition(Inches.of(0))
+      .withClosedLoopControlPeriod(Milliseconds.of(1))
       ;
-      
+
   private final SmartMotorController       motor         = new TalonFXWrapper(elevatorMotor,
                                                                             DCMotor.getKrakenX60(2),
                                                                             motorConfig);
@@ -89,7 +89,7 @@ public class ElevatorSubsystem extends SubsystemBase
       .withMaxRobotLength(Meters.of(0.75))
       .withRelativePosition(new Translation3d(Meters.of(-0.25), Meters.of(0), Meters.of(0.5)));
   private       ElevatorConfig          m_config           = new ElevatorConfig(motor)
-      .withStartingHeight(Meters.of(0.25))
+      .withStartingHeight(Meters.of(0))
       .withHardLimits(Meters.of(.0254), Meters.of(2.5))
       .withTelemetry("Elevator", TelemetryVerbosity.HIGH)
       .withMechanismPositionConfig(m_robotToMechanism)
@@ -101,11 +101,12 @@ public class ElevatorSubsystem extends SubsystemBase
     Intake(Inches.of(16)),
     L1(Inches.of(12)),
     L2(Inches.of(28)),
-    L3(Inches.of(50)),
-    L4(Inches.of(80)),
+    L3(Inches.of(40)),
+    L4(Inches.of(70)),
     L2Algae(Inches.of(32)),
     L3Algae(Inches.of(45)),
-    Barge(Inches.of(85));
+    Barge(Inches.of(85)),
+    Zero(Inches.of(0));
 
     private final Distance distance;
 
@@ -120,10 +121,10 @@ public class ElevatorSubsystem extends SubsystemBase
   }
 
 
-  public static boolean isFollower(TalonFX motor) {
-    ControlRequest applied = motor.getAppliedControl();
-    return applied instanceof Follower;
-}
+//  public static boolean isFollower(TalonFX motor) {
+//    ControlRequest applied = motor.getAppliedControl();
+//    return applied instanceof Follower;
+//}
   public ElevatorSubsystem()
   {
     BaseStatusSignal.setUpdateFrequencyForAll(25,
@@ -138,8 +139,8 @@ public class ElevatorSubsystem extends SubsystemBase
   {
     m_elevator.updateTelemetry();
 
-    boolean fol = isFollower(elevatorFollower);
-    SmartDashboard.putBoolean("Elevator/Follower Mode", fol);
+//    boolean fol = isFollower(elevatorFollower);
+//    SmartDashboard.putBoolean("Elevator/Follower Mode", fol);
     
 
   }
