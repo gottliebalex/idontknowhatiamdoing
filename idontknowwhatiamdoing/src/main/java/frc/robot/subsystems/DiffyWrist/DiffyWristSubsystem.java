@@ -3,7 +3,10 @@ package frc.robot.subsystems.DiffyWrist;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -16,6 +19,8 @@ import yams.motorcontrollers.local.SparkWrapper;
 import static edu.wpi.first.units.Units.*;
 import static yams.mechanisms.SmartMechanism.gearbox;
 import static yams.mechanisms.SmartMechanism.gearing;
+
+import org.littletonrobotics.junction.Logger;
 
 public class DiffyWristSubsystem extends SubsystemBase{
     private final SparkMax                   leftMotor  = new SparkMax(1, SparkLowLevel.MotorType.kBrushless);
@@ -69,15 +74,36 @@ public class DiffyWristSubsystem extends SubsystemBase{
     public Command set(double tilt, double twist) {
       return diffy.set(tilt, twist);
     }
+
+    private static final double TILT_SIGN = +1.0, TWIST_SIGN = +1.0;
+
+    private Measure<AngleUnit> tiltZero = Radians.of(0);
+    private Measure<AngleUnit> twistZero = Radians.of(0);
+
   
+    
+    public void zeroJoints(){
+      tiltZero = diffy.getTiltPosition();
+      twistZero = diffy.getTwistPosition();
+    }
+
     public void periodic()
     {
       diffy.updateTelemetry();
+
+      double tiltRad  = (diffy.getTiltPosition().in(Radians)  - tiltZero.in(Radians))  * TILT_SIGN;
+      double twistRad = (diffy.getTwistPosition().in(Radians) - twistZero.in(Radians)) * TWIST_SIGN;
+
+      Logger.recordOutput("DiffyWrist/TiltRad", tiltRad);
+      Logger.recordOutput("DiffyWrist/TwistRad", twistRad);
+
+      Logger.recordOutput("Field/RobotPose", new Pose2d()); // (0,0,0)
     }
   
     public void simulationPeriodic()
     {
       diffy.simIterate();
     }
+
 }
 
