@@ -12,14 +12,17 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem.ElevatorPosition;
 import frc.robot.subsystems.Wrist.WristSubsystem;
 import frc.robot.subsystems.Wrist.WristSubsystem.WristPosition;
+import frc.robot.subsystems.DiffyWrist.DiffyWristSubsystem;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;;
 
 /**
@@ -31,6 +34,7 @@ import static edu.wpi.first.units.Units.Inches;;
 public class RobotContainer {
   public ElevatorSubsystem elevator = new ElevatorSubsystem();
   public WristSubsystem wrist = new WristSubsystem();
+  private final DiffyWristSubsystem m_DiffyWristSubsystem = new DiffyWristSubsystem();
   public CommandXboxController xboxController = new CommandXboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -76,7 +80,23 @@ public class RobotContainer {
       new JoystickButton(apacController, 6).onTrue(WristCommands.AlgaeIntake(wrist));
       new JoystickButton(apacController, 7).onTrue(WristCommands.TestWrist(wrist));
       new JoystickButton(apacController, 8).onTrue(wrist.sysId());
-  }
+
+      // xboxController.button(1).onTrue(elevator.startSignalLogger());
+      // xboxController.button(2).onTrue(elevator.stopSignalLogger());
+
+      // xboxController.button(3).whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+      // xboxController.button(4).whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+      // xboxController.button(5).whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
+      // xboxController.button(6).whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+      xboxController.button(1).whileTrue(m_DiffyWristSubsystem.setAngle(Degrees.of(15), Degrees.of(15)));
+      xboxController.button(2).whileTrue(m_DiffyWristSubsystem.setAngle(Degrees.of(30), Degrees.of(45)));
+      xboxController.button(3).whileTrue(m_DiffyWristSubsystem.set(0,0));
+      xboxController.button(4).whileTrue(m_DiffyWristSubsystem.set(0.5,0));
+      xboxController.button(5).whileTrue(m_DiffyWristSubsystem.set(0,0.5));
+      xboxController.button(6).whileTrue(m_DiffyWristSubsystem.setAngle(Degrees.of(0), Degrees.of(0)));
+      xboxController.button(7).whileTrue(m_DiffyWristSubsystem.setAngle(Degrees.of(90), Degrees.of(45)));
+  
+    }
   
 
   /**

@@ -42,6 +42,12 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.controls.VoltageOut;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.Commands;
+import static edu.wpi.first.units.Units.Hertz;
+import edu.wpi.first.units.measure.Voltage;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -49,8 +55,36 @@ import frc.robot.subsystems.SubsystemConstants;
 
 public class ElevatorSubsystem extends SubsystemBase
 {
+
+
+
   private final TalonFX                   elevatorMotor = new TalonFX(SubsystemConstants.ElevatorLEADER_ID, SubsystemConstants.CANBUS);
   private final TalonFX                   elevatorFollower = new TalonFX(SubsystemConstants.ElevatorFOLLOWER_ID, SubsystemConstants.CANBUS);
+
+
+    // --- CTRE SignalLogger + SysId integration ---
+  // private final StatusSignal<Angle>            rotorPosSignal     = elevatorMotor.getRotorPosition();
+  // private final StatusSignal<AngularVelocity>  rotorVelSignal     = elevatorMotor.getRotorVelocity();
+  // private final StatusSignal<Voltage>          motorVoltageSignal = elevatorMotor.getMotorVoltage();
+
+  // Voltage control request used during SysId
+  // private final VoltageOut m_voltageReq = new VoltageOut(0.0);
+
+  // WPILib SysId routine configured to use CTRE SignalLogger for state strings
+  // private final SysIdRoutine m_sysIdRoutine =
+  //     new SysIdRoutine(
+  //         new SysIdRoutine.Config(
+  //             Volts.of(12).per(Second), // ramp rate
+  //             Volts.of(12),             // dynamic step voltage
+  //             Second.of(30),            // timeout per test (safety)
+  //             state -> SignalLogger.writeString("state", state.toString())
+  //         ),
+  //         new SysIdRoutine.Mechanism(
+  //             volts -> elevatorMotor.setControl(m_voltageReq.withOutput(volts.in(Volts))),
+  //             null, // no additional user logging; SignalLogger captures device signals
+  //             this
+  //         )
+  //     );
 
   //  private final SmartMotorControllerTelemetryConfig motorTelemetryConfig = new SmartMotorControllerTelemetryConfig()
 //          .withMechanismPosition()
@@ -90,7 +124,7 @@ public class ElevatorSubsystem extends SubsystemBase
       .withRelativePosition(new Translation3d(Meters.of(-0.25), Meters.of(0), Meters.of(0.5)));
   private       ElevatorConfig          m_config           = new ElevatorConfig(motor)
       .withStartingHeight(Meters.of(0))
-      .withHardLimits(Meters.of(.0254), Meters.of(2.5))
+      .withHardLimits(Meters.of(0), Meters.of(2.5))
       .withTelemetry("Elevator", TelemetryVerbosity.HIGH)
       .withMechanismPositionConfig(m_robotToMechanism)
       .withMass(Pounds.of(15));
@@ -163,4 +197,16 @@ public class ElevatorSubsystem extends SubsystemBase
   {
     return m_elevator.sysId(Volts.of(12), Volts.of(12).per(Second), Second.of(30));
   }
+
+//   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+//     return m_sysIdRoutine.quasistatic(direction);
+//   }
+
+//   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+//     return m_sysIdRoutine.dynamic(direction);
+//   }
+
+//   // Convenience commands to start/stop CTRE SignalLogger from RobotContainer
+//   public Command startSignalLogger() { return Commands.runOnce(SignalLogger::start); }
+//   public Command stopSignalLogger()  { return Commands.runOnce(SignalLogger::stop); }
 }
